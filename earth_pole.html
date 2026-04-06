@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeographicVGeomagneticPoles</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #000; }
+        #info {
+            position: absolute; top: 20px; left: 20px;
+            color: white; font-family: sans-serif;
+            background: rgba(0,0,0,0.85); padding: 15px;
+            border-radius: 8px; border: 1px solid #00d2ff;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">
+        <b style="color:#ff4444">Red Axis:</b> Geographic<br>
+        <b style="color:#27F55B">Green Axis:</b> Geomagnetic<br>
+        
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { TrackballControls } from 'three/addons/controls/TrackballControls.js';
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 4, 8); // Pulled back slightly to see longer lines
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+        const sun = new THREE.DirectionalLight(0xffffff, 1.2);
+        sun.position.set(5, 5, 5);
+        scene.add(sun);
+
+        const worldGroup = new THREE.Group();
+        scene.add(worldGroup);
+
+        // --- Earth (Radius 2) ---
+        const textureLoader = new THREE.TextureLoader();
+        const earthTexture = textureLoader.load('https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Whole_world_-_land_and_oceans_12000.jpg/3840px-Whole_world_-_land_and_oceans_12000.jpg');
+        const earth = new THREE.Mesh(
+            new THREE.SphereGeometry(2, 64, 64),
+            new THREE.MeshPhongMaterial({ map: earthTexture })
+        );
+        worldGroup.add(earth);
+
+        // --- Axis Settings ---
+        const axisRadius = 4; // 
+
+        function getVector(lat, lon, radius) {
+            const phi = (90 - lat) * (Math.PI / 180);
+            const theta = (lon + 180) * (Math.PI / 180);
+            return new THREE.Vector3(
+                -radius * Math.sin(phi) * Math.cos(theta),
+                radius * Math.cos(phi),
+                radius * Math.sin(phi) * Math.sin(theta)
+            );
+        }
+
+        // 1. Geographic Axis (Red) - Extended to +/- 4
+        const geoLine = new THREE.Line(
+            new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(0, -axisRadius, 0), 
+                new THREE.Vector3(0, axisRadius, 0)
+            ]),
+            new THREE.LineBasicMaterial({ color: 0xff4444 })
+        );
+        worldGroup.add(geoLine);
+
+        // 2. Geomagnetic Dipole (Blue) - Extended to radius 4
+        const magNorth = getVector(80.8, -72.7, axisRadius);
+        const magSouth = getVector(-80.8, 107.3, axisRadius);
+
+        const magLine = new THREE.Line(
+            new THREE.BufferGeometry().setFromPoints([magSouth, magNorth]),
+            new THREE.LineBasicMaterial({ color: 0x27F55B })
+        );
+        worldGroup.add(magLine);
+
+        // --- Controls ---
+        const controls = new TrackballControls(camera, renderer.domElement);
+        controls.rotateSpeed = 4.0;
+        controls.dynamicDampingFactor = 0.1;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            controls.handleResize();
+        });
+
+        animate();
+    </script>
+</body>
+</html>
