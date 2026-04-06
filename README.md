@@ -16,3 +16,6 @@ This was made to present a more realistic visualisation of the 11 degree offset 
 
 Please DM me over on twitter or email me at kolhe.sci@gmail.com for any changes or suggestions. 
 -Neel
+
+
+CC BY
