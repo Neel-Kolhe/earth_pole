@@ -5,6 +5,9 @@ Values taken from the Wiki:
 
 https://en.wikipedia.org/wiki/Geomagnetic_pole
 
+Image taken from:
+https://en.wikipedia.org/wiki/File:Whole_world_-_land_and_oceans_12000.jpg
+
 The creation of this visualisation was prompted by the images from the ARTEMIS 2 mission which led to a discussion around auroral ovals
 being visible and being a rough approximation of the positions of the geomagnetic poles.
 https://x.com/neel_kolhe/status/2040091370635870601
