@@ -73,7 +73,7 @@
             );
         }
 
-        // 1. Geographic Axis (Red) - Extended to +/- 4
+        // 1. Geographic Axis (Red)
         const geoLine = new THREE.Line(
             new THREE.BufferGeometry().setFromPoints([
                 new THREE.Vector3(0, -axisRadius, 0), 
@@ -83,7 +83,7 @@
         );
         worldGroup.add(geoLine);
 
-        // 2. Geomagnetic Dipole (Blue) - Extended to radius 4
+        // 2. Geomagnetic Dipole (Green) 
         const magNorth = getVector(80.8, -72.7, axisRadius);
         const magSouth = getVector(-80.8, 107.3, axisRadius);
 
